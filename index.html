@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Football Prediction Engine</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #0b0f14;
+      color: white;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 700px;
+      margin: auto;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 10px;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #9ca3af;
+      margin-bottom: 30px;
+    }
+
+    .card {
+      background: #151b23;
+      border: 1px solid #27303b;
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin-top: 15px;
+      margin-bottom: 6px;
+      color: #d1d5db;
+    }
+
+    input {
+      width: 100%;
+      padding: 14px;
+      border-radius: 10px;
+      border: 1px solid #374151;
+      background: #0d131a;
+      color: white;
+      font-size: 16px;
+    }
+
+    button {
+      width: 100%;
+      margin-top: 20px;
+      padding: 15px;
+      border: none;
+      border-radius: 10px;
+      background: #16a34a;
+      color: white;
+      font-size: 17px;
+      font-weight: bold;
+    }
+
+    .result {
+      display: none;
+    }
+
+    .prediction {
+      font-size: 24px;
+      font-weight: bold;
+      text-align: center;
+      margin: 15px 0;
+    }
+
+    .stat {
+      display: flex;
+      justify-content: space-between;
+      padding: 12px 0;
+      border-bottom: 1px solid #27303b;
+    }
+
+    .warning {
+      margin-top: 20px;
+      color: #9ca3af;
+      font-size: 13px;
+      text-align: center;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <h1>⚽ Football Prediction Engine</h1>
+
+  <div class="subtitle">
+    Analiză statistică pentru meciuri de fotbal
+  </div>
+
+  <div class="card">
+
+    <h2>Introdu datele meciului</h2>
+
+    <label>Echipa gazdă</label>
+    <input id="homeTeam" placeholder="Ex: Liverpool">
+
+    <label>Echipa oaspete</label>
+    <input id="awayTeam" placeholder="Ex: Chelsea">
+
+    <label>Goluri medii gazde</label>
+    <input id="homeGoals" type="number" step="0.1" placeholder="1.8">
+
+    <label>Goluri medii oaspeți</label>
+    <input id="awayGoals" type="number" step="0.1" placeholder="1.2">
+
+    <label>Cornere medii gazde</label>
+    <input id="homeCorners" type="number" step="0.1" placeholder="5.5">
+
+    <label>Cornere medii oaspeți</label>
+    <input id="awayCorners" type="number" step="0.1" placeholder="4.2">
+
+    <button onclick="calculatePrediction()">
+      🔥 ANALIZEAZĂ MECIUL
+    </button>
+
+  </div>
+
+  <div class="card result" id="result">
+
+    <h2>📊 Rezultatul analizei</h2>
+
+    <div class="prediction" id="mainPrediction"></div>
+
+    <div class="stat">
+      <span>Goluri totale estimate</span>
+      <strong id="totalGoals"></strong>
+    </div>
+
+    <div class="stat">
+      <span>Cornere totale estimate</span>
+      <strong id="totalCorners"></strong>
+    </div>
+
+    <div class="stat">
+      <span>Over 1.5 goluri</span>
+      <strong id="over15"></strong>
+    </div>
+
+    <div class="stat">
+      <span>Over 2.5 goluri</span>
+      <strong id="over25"></strong>
+    </div>
+
+    <div class="stat">
+      <span>BTTS</span>
+      <strong id="btts"></strong>
+    </div>
+
+    <div class="stat">
+      <span>Nivel estimat de încredere</span>
+      <strong id="confidence"></strong>
+    </div>
+
+    <div class="warning">
+      ⚠️ Acestea sunt estimări statistice, nu rezultate garantate.
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+
+function calculatePrediction() {
+
+  const home = document.getElementById("homeTeam").value || "Gazde";
+  const away = document.getElementById("awayTeam").value || "Oaspeți";
+
+  const homeGoals =
+    parseFloat(document.getElementById("homeGoals").value) || 0;
+
+  const awayGoals =
+    parseFloat(document.getElementById("awayGoals").value) || 0;
+
+  const homeCorners =
+    parseFloat(document.getElementById("homeCorners").value) || 0;
+
+  const awayCorners =
+    parseFloat(document.getElementById("awayCorners").value) || 0;
+
+  const totalGoals = homeGoals + awayGoals;
+  const totalCorners = homeCorners + awayCorners;
+
+  let prediction;
+
+  if (homeGoals > awayGoals + 0.4) {
+    prediction = home + " — avantaj gazde";
+  } 
+  else if (awayGoals > homeGoals + 0.4) {
+    prediction = away + " — avantaj oaspeți";
+  } 
+  else {
+    prediction = "Meci echilibrat";
+  }
+
+  let over15 = Math.min(95, Math.round(55 + totalGoals * 12));
+  let over25 = Math.min(90, Math.round(30 + totalGoals * 15));
+  let btts = Math.min(90, Math.round(25 + Math.min(homeGoals, awayGoals) * 25));
+
+  let confidence = Math.min(
+    90,
+    Math.round(50 + Math.abs(homeGoals - awayGoals) * 15)
+  );
+
+  document.getElementById("mainPrediction").innerText =
+    prediction;
+
+  document.getElementById("totalGoals").innerText =
+    totalGoals.toFixed(2);
+
+  document.getElementById("totalCorners").innerText =
+    totalCorners.toFixed(2);
+
+  document.getElementById("over15").innerText =
+    over15 + "%";
+
+  document.getElementById("over25").innerText =
+    over25 + "%";
+
+  document.getElementById("btts").innerText =
+    btts + "%";
+
+  document.getElementById("confidence").innerText =
+    confidence + "%";
+
+  document.getElementById("result").style.display = "block";
+}
+
+</script>
+
+</body>
+</html>
