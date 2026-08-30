@@ -1,250 +1,1165 @@
 <!DOCTYPE html>
 <html lang="ro">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Football Prediction Engine</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <style>
-    * {
-      box-sizing: border-box;
-    }
+<title>Football Prediction Engine</title>
 
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #0b0f14;
-      color: white;
-      padding: 20px;
-    }
+<style>
 
-    .container {
-      max-width: 700px;
-      margin: auto;
-    }
+* {
+  box-sizing: border-box;
+}
 
-    h1 {
-      text-align: center;
-      margin-bottom: 10px;
-    }
+body {
+  margin: 0;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+  background: #070b10;
+  color: white;
+}
 
-    .subtitle {
-      text-align: center;
-      color: #9ca3af;
-      margin-bottom: 30px;
-    }
+.container {
+  max-width: 760px;
+  margin: auto;
+}
 
-    .card {
-      background: #151b23;
-      border: 1px solid #27303b;
-      border-radius: 16px;
-      padding: 20px;
-      margin-bottom: 20px;
-    }
+h1 {
+  text-align: center;
+  font-size: 34px;
+  margin: 10px 0;
+}
 
-    label {
-      display: block;
-      margin-top: 15px;
-      margin-bottom: 6px;
-      color: #d1d5db;
-    }
+.subtitle {
+  text-align: center;
+  color: #9ca3af;
+  margin-bottom: 25px;
+}
 
-    input {
-      width: 100%;
-      padding: 14px;
-      border-radius: 10px;
-      border: 1px solid #374151;
-      background: #0d131a;
-      color: white;
-      font-size: 16px;
-    }
+.card {
+  background: #111820;
+  border: 1px solid #273342;
+  border-radius: 18px;
+  padding: 22px;
+  margin-bottom: 20px;
+}
 
-    button {
-      width: 100%;
-      margin-top: 20px;
-      padding: 15px;
-      border: none;
-      border-radius: 10px;
-      background: #16a34a;
-      color: white;
-      font-size: 17px;
-      font-weight: bold;
-    }
+h2 {
+  margin-top: 0;
+}
 
-    .result {
-      display: none;
-    }
+label {
+  display: block;
+  margin-top: 15px;
+  margin-bottom: 7px;
+  color: #cbd5e1;
+}
 
-    .prediction {
-      font-size: 24px;
-      font-weight: bold;
-      text-align: center;
-      margin: 15px 0;
-    }
+input {
+  width: 100%;
+  padding: 15px;
+  border-radius: 11px;
+  border: 1px solid #354152;
+  background: #090e14;
+  color: white;
+  font-size: 17px;
+  outline: none;
+}
 
-    .stat {
-      display: flex;
-      justify-content: space-between;
-      padding: 12px 0;
-      border-bottom: 1px solid #27303b;
-    }
+input:focus {
+  border-color: #22c55e;
+}
 
-    .warning {
-      margin-top: 20px;
-      color: #9ca3af;
-      font-size: 13px;
-      text-align: center;
-    }
-  </style>
+button {
+  width: 100%;
+  margin-top: 22px;
+  padding: 16px;
+  border: none;
+  border-radius: 12px;
+  background: #16a34a;
+  color: white;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #22c55e;
+}
+
+button:disabled {
+  opacity: 0.6;
+}
+
+.loading {
+  display: none;
+  text-align: center;
+  padding: 20px;
+  color: #9ca3af;
+}
+
+.result {
+  display: none;
+}
+
+.mainPrediction {
+  text-align: center;
+  font-size: 27px;
+  font-weight: bold;
+  margin: 20px 0;
+}
+
+.score {
+  text-align: center;
+  font-size: 38px;
+  font-weight: bold;
+  margin: 15px 0 25px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.stat {
+  background: #0b1118;
+  border: 1px solid #273342;
+  border-radius: 12px;
+  padding: 15px;
+}
+
+.stat span {
+  display: block;
+  color: #9ca3af;
+  font-size: 13px;
+  margin-bottom: 8px;
+}
+
+.stat strong {
+  font-size: 21px;
+}
+
+.section {
+  margin-top: 25px;
+}
+
+.section h3 {
+  margin-bottom: 12px;
+}
+
+.form {
+  display: flex;
+  gap: 7px;
+  flex-wrap: wrap;
+}
+
+.form span {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+}
+
+.win {
+  background: #16a34a;
+}
+
+.draw {
+  background: #64748b;
+}
+
+.loss {
+  background: #dc2626;
+}
+
+.recommendation {
+  margin-top: 20px;
+  padding: 18px;
+  border-radius: 12px;
+  background: #0b1118;
+  border: 1px solid #273342;
+}
+
+.recommendation strong {
+  color: #22c55e;
+}
+
+.warning {
+  margin-top: 20px;
+  text-align: center;
+  color: #94a3b8;
+  font-size: 12px;
+}
+
+.error {
+  display: none;
+  background: #3f1515;
+  border: 1px solid #7f1d1d;
+  color: #fecaca;
+  padding: 15px;
+  border-radius: 10px;
+  margin-top: 15px;
+}
+
+.teamHeader {
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.teamBadge {
+  width: 70px;
+  height: 70px;
+  object-fit: contain;
+  margin: 5px;
+}
+
+.probability {
+  margin-top: 15px;
+}
+
+.bar {
+  height: 12px;
+  background: #1e293b;
+  border-radius: 20px;
+  overflow: hidden;
+  margin-top: 6px;
+}
+
+.barFill {
+  height: 100%;
+  background: #22c55e;
+  border-radius: 20px;
+}
+
+.small {
+  color: #94a3b8;
+  font-size: 13px;
+}
+
+</style>
 </head>
 
 <body>
 
 <div class="container">
 
-  <h1>⚽ Football Prediction Engine</h1>
+<h1>⚽ Football Prediction Engine</h1>
 
-  <div class="subtitle">
-    Analiză statistică pentru meciuri de fotbal
-  </div>
+<div class="subtitle">
+Analiză automată bazată pe date reale
+</div>
 
-  <div class="card">
+<div class="card">
 
-    <h2>Introdu datele meciului</h2>
+<h2>🔎 Introdu meciul</h2>
 
-    <label>Echipa gazdă</label>
-    <input id="homeTeam" placeholder="Ex: Liverpool">
+<label>Echipa gazdă</label>
+<input id="homeTeam" placeholder="Ex: Liverpool">
 
-    <label>Echipa oaspete</label>
-    <input id="awayTeam" placeholder="Ex: Chelsea">
+<label>Echipa oaspete</label>
+<input id="awayTeam" placeholder="Ex: Chelsea">
 
-    <label>Goluri medii gazde</label>
-    <input id="homeGoals" type="number" step="0.1" placeholder="1.8">
+<button id="analyzeBtn" onclick="analyzeMatch()">
+🔥 ANALIZEAZĂ MECIUL
+</button>
 
-    <label>Goluri medii oaspeți</label>
-    <input id="awayGoals" type="number" step="0.1" placeholder="1.2">
+<div class="loading" id="loading">
+⏳ Se preiau datele echipelor și se calculează predicția...
+</div>
 
-    <label>Cornere medii gazde</label>
-    <input id="homeCorners" type="number" step="0.1" placeholder="5.5">
+<div class="error" id="error"></div>
 
-    <label>Cornere medii oaspeți</label>
-    <input id="awayCorners" type="number" step="0.1" placeholder="4.2">
+</div>
 
-    <button onclick="calculatePrediction()">
-      🔥 ANALIZEAZĂ MECIUL
-    </button>
+<div class="card result" id="result">
 
-  </div>
+<div class="teamHeader">
 
-  <div class="card result" id="result">
+<img id="homeBadge" class="teamBadge" src="" alt="">
+<img id="awayBadge" class="teamBadge" src="" alt="">
 
-    <h2>📊 Rezultatul analizei</h2>
+</div>
 
-    <div class="prediction" id="mainPrediction"></div>
+<div class="mainPrediction" id="mainPrediction"></div>
 
-    <div class="stat">
-      <span>Goluri totale estimate</span>
-      <strong id="totalGoals"></strong>
-    </div>
+<div class="score" id="predictedScore"></div>
 
-    <div class="stat">
-      <span>Cornere totale estimate</span>
-      <strong id="totalCorners"></strong>
-    </div>
+<div class="grid">
 
-    <div class="stat">
-      <span>Over 1.5 goluri</span>
-      <strong id="over15"></strong>
-    </div>
+<div class="stat">
+<span>Probabilitate gazde</span>
+<strong id="homeWin"></strong>
+</div>
 
-    <div class="stat">
-      <span>Over 2.5 goluri</span>
-      <strong id="over25"></strong>
-    </div>
+<div class="stat">
+<span>Probabilitate egal</span>
+<strong id="draw"></strong>
+</div>
 
-    <div class="stat">
-      <span>BTTS</span>
-      <strong id="btts"></strong>
-    </div>
+<div class="stat">
+<span>Probabilitate oaspeți</span>
+<strong id="awayWin"></strong>
+</div>
 
-    <div class="stat">
-      <span>Nivel estimat de încredere</span>
-      <strong id="confidence"></strong>
-    </div>
+<div class="stat">
+<span>Goluri estimate</span>
+<strong id="expectedGoals"></strong>
+</div>
 
-    <div class="warning">
-      ⚠️ Acestea sunt estimări statistice, nu rezultate garantate.
-    </div>
+<div class="stat">
+<span>Over 1.5</span>
+<strong id="over15"></strong>
+</div>
 
-  </div>
+<div class="stat">
+<span>Over 2.5</span>
+<strong id="over25"></strong>
+</div>
+
+<div class="stat">
+<span>Over 3.5</span>
+<strong id="over35"></strong>
+</div>
+
+<div class="stat">
+<span>BTTS</span>
+<strong id="btts"></strong>
+</div>
+
+<div class="stat">
+<span>Confidence Score</span>
+<strong id="confidence"></strong>
+</div>
+
+<div class="stat">
+<span>Forma gazde</span>
+<strong id="homeFormText"></strong>
+</div>
+
+<div class="stat">
+<span>Forma oaspeți</span>
+<strong id="awayFormText"></strong>
+</div>
+
+<div class="stat">
+<span>Ultimele meciuri analizate</span>
+<strong id="matchesUsed"></strong>
+</div>
+
+</div>
+
+<div class="section">
+
+<h3>🏠 Forma recentă gazde</h3>
+
+<div class="form" id="homeForm"></div>
+
+</div>
+
+<div class="section">
+
+<h3>✈️ Forma recentă oaspeți</h3>
+
+<div class="form" id="awayForm"></div>
+
+</div>
+
+<div class="section">
+
+<h3>🎯 Probabilități</h3>
+
+<div class="probability">
+<div>Gazde <span id="homeBarText"></span></div>
+<div class="bar">
+<div class="barFill" id="homeBar"></div>
+</div>
+</div>
+
+<div class="probability">
+<div>Egal <span id="drawBarText"></span></div>
+<div class="bar">
+<div class="barFill" id="drawBar"></div>
+</div>
+</div>
+
+<div class="probability">
+<div>Oaspeți <span id="awayBarText"></span></div>
+<div class="bar">
+<div class="barFill" id="awayBar"></div>
+</div>
+</div>
+
+</div>
+
+<div class="recommendation">
+
+<strong>🧠 ANALIZA ENGINE-ULUI</strong>
+
+<p id="analysisText"></p>
+
+</div>
+
+<div class="warning">
+
+⚠️ Predicțiile sunt estimări statistice și nu garantează rezultatul unui meci.
+
+</div>
+
+</div>
 
 </div>
 
 <script>
 
-function calculatePrediction() {
+const API =
+"https://www.thesportsdb.com/api/v1/json/123";
 
-  const home = document.getElementById("homeTeam").value || "Gazde";
-  const away = document.getElementById("awayTeam").value || "Oaspeți";
 
-  const homeGoals =
-    parseFloat(document.getElementById("homeGoals").value) || 0;
+// ------------------------------------------
+// GET TEAM
+// ------------------------------------------
 
-  const awayGoals =
-    parseFloat(document.getElementById("awayGoals").value) || 0;
+async function getTeam(teamName) {
 
-  const homeCorners =
-    parseFloat(document.getElementById("homeCorners").value) || 0;
+  const url =
+    API + "/searchteams.php?t=" +
+    encodeURIComponent(teamName);
 
-  const awayCorners =
-    parseFloat(document.getElementById("awayCorners").value) || 0;
+  const response = await fetch(url);
 
-  const totalGoals = homeGoals + awayGoals;
-  const totalCorners = homeCorners + awayCorners;
-
-  let prediction;
-
-  if (homeGoals > awayGoals + 0.4) {
-    prediction = home + " — avantaj gazde";
-  } 
-  else if (awayGoals > homeGoals + 0.4) {
-    prediction = away + " — avantaj oaspeți";
-  } 
-  else {
-    prediction = "Meci echilibrat";
+  if (!response.ok) {
+    throw new Error("Eroare la conectarea la API.");
   }
 
-  let over15 = Math.min(95, Math.round(55 + totalGoals * 12));
-  let over25 = Math.min(90, Math.round(30 + totalGoals * 15));
-  let btts = Math.min(90, Math.round(25 + Math.min(homeGoals, awayGoals) * 25));
+  const data = await response.json();
 
-  let confidence = Math.min(
-    90,
-    Math.round(50 + Math.abs(homeGoals - awayGoals) * 15)
+  if (!data.teams || data.teams.length === 0) {
+    throw new Error(
+      "Nu am găsit echipa: " + teamName
+    );
+  }
+
+  return data.teams[0];
+}
+
+
+// ------------------------------------------
+// GET LAST MATCHES
+// ------------------------------------------
+
+async function getLastMatches(teamId) {
+
+  const url =
+    API + "/eventslast.php?id=" + teamId;
+
+  const response = await fetch(url);
+
+  if (!response.ok) {
+    throw new Error("Nu am putut lua istoricul echipei.");
+  }
+
+  const data = await response.json();
+
+  return data.results || [];
+}
+
+
+// ------------------------------------------
+// POISSON
+// ------------------------------------------
+
+function poisson(lambda, k) {
+
+  let factorial = 1;
+
+  for (let i = 1; i <= k; i++) {
+    factorial *= i;
+  }
+
+  return (
+    Math.exp(-lambda) *
+    Math.pow(lambda, k) /
+    factorial
   );
+}
 
-  document.getElementById("mainPrediction").innerText =
-    prediction;
 
-  document.getElementById("totalGoals").innerText =
-    totalGoals.toFixed(2);
+// ------------------------------------------
+// CALCULATE RESULT PROBABILITIES
+// ------------------------------------------
 
-  document.getElementById("totalCorners").innerText =
-    totalCorners.toFixed(2);
+function calculateProbabilities(homeGoals, awayGoals) {
 
-  document.getElementById("over15").innerText =
-    over15 + "%";
+  let homeWin = 0;
+  let draw = 0;
+  let awayWin = 0;
 
-  document.getElementById("over25").innerText =
-    over25 + "%";
+  let bestScore = "1 - 1";
+  let bestScoreProbability = 0;
 
-  document.getElementById("btts").innerText =
-    btts + "%";
+  for (let h = 0; h <= 6; h++) {
 
-  document.getElementById("confidence").innerText =
-    confidence + "%";
+    for (let a = 0; a <= 6; a++) {
 
-  document.getElementById("result").style.display = "block";
+      const probability =
+        poisson(homeGoals, h) *
+        poisson(awayGoals, a);
+
+      if (h > a) {
+        homeWin += probability;
+      }
+
+      if (h === a) {
+        draw += probability;
+      }
+
+      if (a > h) {
+        awayWin += probability;
+      }
+
+      if (probability > bestScoreProbability) {
+
+        bestScoreProbability = probability;
+
+        bestScore =
+          h + " - " + a;
+      }
+
+    }
+  }
+
+  return {
+    homeWin,
+    draw,
+    awayWin,
+    bestScore
+  };
+}
+
+
+// ------------------------------------------
+// FORM
+// ------------------------------------------
+
+function getForm(matches, teamId) {
+
+  const form = [];
+
+  let goalsFor = 0;
+  let goalsAgainst = 0;
+
+  matches.forEach(match => {
+
+    const homeScore =
+      parseInt(match.intHomeScore);
+
+    const awayScore =
+      parseInt(match.intAwayScore);
+
+    if (
+      isNaN(homeScore) ||
+      isNaN(awayScore)
+    ) {
+      return;
+    }
+
+    const isHome =
+      String(match.idHomeTeam) ===
+      String(teamId);
+
+    const gf =
+      isHome ? homeScore : awayScore;
+
+    const ga =
+      isHome ? awayScore : homeScore;
+
+    goalsFor += gf;
+    goalsAgainst += ga;
+
+    if (gf > ga) {
+
+      form.push({
+        result: "W",
+        className: "win"
+      });
+
+    } else if (gf === ga) {
+
+      form.push({
+        result: "D",
+        className: "draw"
+      });
+
+    } else {
+
+      form.push({
+        result: "L",
+        className: "loss"
+      });
+
+    }
+
+  });
+
+  return {
+    form,
+    goalsFor,
+    goalsAgainst
+  };
+
+}
+
+
+// ------------------------------------------
+// FORM SCORE
+// ------------------------------------------
+
+function formScore(form) {
+
+  let score = 0;
+
+  form.forEach(item => {
+
+    if (item.result === "W") {
+      score += 3;
+    }
+
+    if (item.result === "D") {
+      score += 1;
+    }
+
+  });
+
+  return score;
+}
+
+
+// ------------------------------------------
+// MAIN ANALYSIS
+// ------------------------------------------
+
+async function analyzeMatch() {
+
+  const homeName =
+    document.getElementById("homeTeam").value.trim();
+
+  const awayName =
+    document.getElementById("awayTeam").value.trim();
+
+  const error =
+    document.getElementById("error");
+
+  const result =
+    document.getElementById("result");
+
+  const loading =
+    document.getElementById("loading");
+
+  const button =
+    document.getElementById("analyzeBtn");
+
+  error.style.display = "none";
+  result.style.display = "none";
+
+  if (!homeName || !awayName) {
+
+    error.innerText =
+      "Introdu ambele echipe.";
+
+    error.style.display = "block";
+
+    return;
+  }
+
+  loading.style.display = "block";
+  button.disabled = true;
+
+  try {
+
+    // Get teams
+
+    const homeTeam =
+      await getTeam(homeName);
+
+    const awayTeam =
+      await getTeam(awayName);
+
+
+    // Get history
+
+    const homeMatches =
+      await getLastMatches(homeTeam.idTeam);
+
+    const awayMatches =
+      await getLastMatches(awayTeam.idTeam);
+
+
+    if (
+      homeMatches.length === 0 ||
+      awayMatches.length === 0
+    ) {
+
+      throw new Error(
+        "Nu există suficiente date pentru una dintre echipe."
+      );
+
+    }
+
+
+    // Form
+
+    const homeData =
+      getForm(
+        homeMatches,
+        homeTeam.idTeam
+      );
+
+    const awayData =
+      getForm(
+        awayMatches,
+        awayTeam.idTeam
+      );
+
+
+    // Average goals
+
+    const homeGames =
+      Math.max(homeData.form.length, 1);
+
+    const awayGames =
+      Math.max(awayData.form.length, 1);
+
+    const homeAvg =
+      homeData.goalsFor / homeGames;
+
+    const homeConceded =
+      homeData.goalsAgainst / homeGames;
+
+    const awayAvg =
+      awayData.goalsFor / awayGames;
+
+    const awayConceded =
+      awayData.goalsAgainst / awayGames;
+
+
+    // ------------------------------------------
+    // EXPECTED GOALS
+    // ------------------------------------------
+
+    let expectedHome =
+      (homeAvg + awayConceded) / 2;
+
+    let expectedAway =
+      (awayAvg + homeConceded) / 2;
+
+
+    // Home advantage
+
+    expectedHome *= 1.10;
+    expectedAway *= 0.92;
+
+
+    // Prevent unrealistic values
+
+    expectedHome =
+      Math.max(0.15, Math.min(4.5, expectedHome));
+
+    expectedAway =
+      Math.max(0.15, Math.min(4.5, expectedAway));
+
+
+    const totalGoals =
+      expectedHome + expectedAway;
+
+
+    // ------------------------------------------
+    // PROBABILITIES
+    // ------------------------------------------
+
+    const probabilities =
+      calculateProbabilities(
+        expectedHome,
+        expectedAway
+      );
+
+
+    let homeWin =
+      probabilities.homeWin * 100;
+
+    let draw =
+      probabilities.draw * 100;
+
+    let awayWin =
+      probabilities.awayWin * 100;
+
+
+    // ------------------------------------------
+    // GOAL MARKETS
+    // ------------------------------------------
+
+    let under15 = 0;
+    let under25 = 0;
+    let under35 = 0;
+
+    let btts = 0;
+
+    for (let h = 0; h <= 7; h++) {
+
+      for (let a = 0; a <= 7; a++) {
+
+        const p =
+          poisson(expectedHome, h) *
+          poisson(expectedAway, a);
+
+        const total =
+          h + a;
+
+        if (total <= 1) {
+          under15 += p;
+        }
+
+        if (total <= 2) {
+          under25 += p;
+        }
+
+        if (total <= 3) {
+          under35 += p;
+        }
+
+        if (h >= 1 && a >= 1) {
+          btts += p;
+        }
+
+      }
+
+    }
+
+
+    const over15 =
+      (1 - under15) * 100;
+
+    const over25 =
+      (1 - under25) * 100;
+
+    const over35 =
+      (1 - under35) * 100;
+
+    btts *= 100;
+
+
+    // ------------------------------------------
+    // CONFIDENCE
+    // ------------------------------------------
+
+    const difference =
+      Math.abs(homeWin - awayWin);
+
+    let confidence =
+      50 + difference * 0.65;
+
+    confidence =
+      Math.max(
+        50,
+        Math.min(92, confidence)
+      );
+
+
+    // ------------------------------------------
+    // MAIN PREDICTION
+    // ------------------------------------------
+
+    let prediction;
+
+    if (
+      homeWin > awayWin &&
+      homeWin > draw
+    ) {
+
+      prediction =
+        homeTeam.strTeam +
+        " — avantaj gazde";
+
+    } else if (
+      awayWin > homeWin &&
+      awayWin > draw
+    ) {
+
+      prediction =
+        awayTeam.strTeam +
+        " — avantaj oaspeți";
+
+    } else {
+
+      prediction =
+        "Meci echilibrat — X";
+
+    }
+
+
+    // ------------------------------------------
+    // BEST BET
+    // ------------------------------------------
+
+    let recommendation = "";
+
+    if (over25 >= 65 && btts >= 55) {
+
+      recommendation =
+        "Scenariu interesant: OVER 2.5 + BTTS.";
+
+    } else if (over25 >= 65) {
+
+      recommendation =
+        "Cel mai puternic semnal statistic este OVER 2.5.";
+
+    } else if (btts >= 60) {
+
+      recommendation =
+        "Ambele echipe au o probabilitate bună să marcheze.";
+
+    } else if (homeWin >= 60) {
+
+      recommendation =
+        "Gazdele au avantaj statistic clar.";
+
+    } else if (awayWin >= 60) {
+
+      recommendation =
+        "Oaspeții au avantaj statistic clar.";
+
+    } else {
+
+      recommendation =
+        "Nu există un avantaj statistic suficient de puternic.";
+
+    }
+
+
+    // ------------------------------------------
+    // DISPLAY
+    // ------------------------------------------
+
+    document.getElementById(
+      "mainPrediction"
+    ).innerText = prediction;
+
+
+    document.getElementById(
+      "predictedScore"
+    ).innerText =
+      probabilities.bestScore;
+
+
+    document.getElementById(
+      "homeWin"
+    ).innerText =
+      Math.round(homeWin) + "%";
+
+
+    document.getElementById(
+      "draw"
+    ).innerText =
+      Math.round(draw) + "%";
+
+
+    document.getElementById(
+      "awayWin"
+    ).innerText =
+      Math.round(awayWin) + "%";
+
+
+    document.getElementById(
+      "expectedGoals"
+    ).innerText =
+      totalGoals.toFixed(2);
+
+
+    document.getElementById(
+      "over15"
+    ).innerText =
+      Math.round(over15) + "%";
+
+
+    document.getElementById(
+      "over25"
+    ).innerText =
+      Math.round(over25) + "%";
+
+
+    document.getElementById(
+      "over35"
+    ).innerText =
+      Math.round(over35) + "%";
+
+
+    document.getElementById(
+      "btts"
+    ).innerText =
+      Math.round(btts) + "%";
+
+
+    document.getElementById(
+      "confidence"
+    ).innerText =
+      Math.round(confidence) + "%";
+
+
+    document.getElementById(
+      "homeFormText"
+    ).innerText =
+      formScore(homeData.form) + " pts";
+
+
+    document.getElementById(
+      "awayFormText"
+    ).innerText =
+      formScore(awayData.form) + " pts";
+
+
+    document.getElementById(
+      "matchesUsed"
+    ).innerText =
+      homeData.form.length +
+      " / " +
+      awayData.form.length;
+
+
+    document.getElementById(
+      "homeBadge"
+    ).src =
+      homeTeam.strBadge || "";
+
+
+    document.getElementById(
+      "awayBadge"
+    ).src =
+      awayTeam.strBadge || "";
+
+
+    // ------------------------------------------
+    // FORM DISPLAY
+    // ------------------------------------------
+
+    const homeForm =
+      document.getElementById("homeForm");
+
+    const awayForm =
+      document.getElementById("awayForm");
+
+    homeForm.innerHTML = "";
+    awayForm.innerHTML = "";
+
+
+    homeData.form.forEach(item => {
+
+      const span =
+        document.createElement("span");
+
+      span.innerText =
+        item.result;
+
+      span.className =
+        item.className;
+
+      homeForm.appendChild(span);
+
+    });
+
+
+    awayData.form.forEach(item => {
+
+      const span =
+        document.createElement("span");
+
+      span.innerText =
+        item.result;
+
+      span.className =
+        item.className;
+
+      awayForm.appendChild(span);
+
+    });
+
+
+    // ------------------------------------------
+    // BARS
+    // ------------------------------------------
+
+    document.getElementById(
+      "homeBar"
+    ).style.width =
+      Math.round(homeWin) + "%";
+
+    document.getElementById(
+      "drawBar"
+    ).style.width =
+      Math.round(draw) + "%";
+
+    document.getElementById(
+      "awayBar"
+    ).style.width =
+      Math.round(awayWin) + "%";
+
+
+    document.getElementById(
+      "homeBarText"
+    ).innerText =
+      Math.round(homeWin) + "%";
+
+    document.getElementById(
+      "drawBarText"
+    ).innerText =
+      Math.round(draw) + "%";
+
+    document.getElementById(
+      "awayBarText"
+    ).innerText =
+      Math.round(awayWin) + "%";
+
+
+    document.getElementById(
+      "analysisText"
+    ).innerText =
+      recommendation;
+
+
+    result.style.display =
+      "block";
+
+    result.scrollIntoView({
+      behavior: "smooth"
+    });
+
+  }
+
+  catch (err) {
+
+    console.error(err);
+
+    error.innerText =
+      "❌ " + err.message;
+
+    error.style.display =
+      "block";
+
+  }
+
+  finally {
+
+    loading.style.display =
+      "none";
+
+    button.disabled =
+      false;
+
+  }
+
 }
 
 </script>
